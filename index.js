@@ -12,7 +12,7 @@ app.use(express.json())
 // import "./db/conn.js"
 
 app.get("/", (req, res) => {
-  res.send("Welcome to the API")
+  res.send(`Jake Riggs's ALAB_319.4.1`)
 })
 
 app.use("/grades", grades)
