@@ -145,7 +145,7 @@ The number of learners with a weighted average (as calculated by the existing ro
 The total number of learners.
 The percentage of learners with an average above 70% (a ratio of the above two outputs). */
 
-    let result = await collection {}
+    let result = await collection
       .aggregate([
         {
           $match: { learner_id: Number(req.params.id) },
@@ -201,7 +201,7 @@ The percentage of learners with an average above 70% (a ratio of the above two o
       ])
       .toArray();
   
-    // if (!result) res.send("Not found").status(404);
+    if (!result) res.send("Not found").status(404);
     else res.send(result).status(200);
   });
 
