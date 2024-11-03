@@ -134,7 +134,7 @@ router.delete("/class/:id", async (req, res) => {
   else res.send(result).status(200);
 });
 
-// Get the weighted average of a specified learner's grades, per class
+// Weighted average of a learner within a class
 router.get("/learner/:id/avg-class", async (req, res) => {
     let collection = await db.collection("grades");
 
@@ -205,61 +205,63 @@ The percentage of learners with an average above 70% (a ratio of the above two o
     else res.send(result).status(200);
   });
 
+/**Can't get this to work */
+
+//   router.get('/stats', async (req, res) => {
+//     try {
+//       const result = await db.collection('grades').aggregate([
+//         {
+//           $unwind: '$scores'
+//         },
+//         {
+//           $group: {
+//             _id: null,
+//             totalLearners: { $sum: 1 },
+//             totalScores: { $sum: 1 },
+//             totalWeightedScores: {
+//               $sum: {
+//                 $cond: [
+//                   { $eq: ['$scores.type', 'exam'] },
+//                   { $multiply: ['$scores.score', 0.5] },
+//                   { $cond: [
+//                       { $eq: ['$scores.type', 'quiz'] },
+//                       { $multiply: ['$scores.score', 0.3] },
+//                       { $multiply: ['$scores.score', 0.2] }
+//                     ]}
+//                 ]
+//               }
+//             }
+//           }
+//         },
+//         {
+//           $project: {
+//             _id: 0,
+//             totalLearners: 1,
+//             averageScore: { $divide: ['$totalWeightedScores', '$totalScores'] },
+//             learnersAbove50: {
+//               $sum: {
+//                 $cond: [{ $gt: ['$averageScore', 50] }, 1, 0]
+//               }
+//             },
+//             percentageAbove50: {
+//               $multiply: [
+//                 { $divide: ['$learnersAbove50', '$totalLearners'] },
+//                 100
+//               ]
+//             }
+//           }
+//         }
+//       ]).toArray();
+  
+//       res.status(200).json(result);
+//     } catch (err) {
+//       res.status(500).json({ error: err.message });
+//     }
+//   });
+  
 /** Create a GET route at /grades/stats/:id
 Within this route, mimic the above aggregation pipeline, but only for learners within a class that has a class_id equal to the specified :id.*/
 
-  router.get('/stats', async (req, res) => {
-    try {
-      const result = await db.collection('grades').aggregate([
-        {
-          $unwind: '$scores'
-        },
-        {
-          $group: {
-            _id: null,
-            totalLearners: { $sum: 1 },
-            totalScores: { $sum: 1 },
-            totalWeightedScores: {
-              $sum: {
-                $cond: [
-                  { $eq: ['$scores.type', 'exam'] },
-                  { $multiply: ['$scores.score', 0.5] },
-                  { $cond: [
-                      { $eq: ['$scores.type', 'quiz'] },
-                      { $multiply: ['$scores.score', 0.3] },
-                      { $multiply: ['$scores.score', 0.2] }
-                    ]}
-                ]
-              }
-            }
-          }
-        },
-        {
-          $project: {
-            _id: 0,
-            totalLearners: 1,
-            averageScore: { $divide: ['$totalWeightedScores', '$totalScores'] },
-            learnersAbove50: {
-              $sum: {
-                $cond: [{ $gt: ['$averageScore', 50] }, 1, 0]
-              }
-            },
-            percentageAbove50: {
-              $multiply: [
-                { $divide: ['$learnersAbove50', '$totalLearners'] },
-                100
-              ]
-            }
-          }
-        }
-      ]).toArray();
-  
-      res.status(200).json(result);
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  });
-  
   router.get("/stats/:id", async (req, res) => {
     try {
       let collection = await db.collection("grades");
