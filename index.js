@@ -17,11 +17,10 @@ app.get("/", (req, res) => {
 
 app.use("/grades", grades)
 
-
 //Global Error handling middlware
 app.use((err, req, res, next) => {
   console.log(err)
-  res.status(500).send("Seems like we messed up somewhere...")
+  res.status(500).send("Seems went wrong.")
 })
 
 // Start the server
